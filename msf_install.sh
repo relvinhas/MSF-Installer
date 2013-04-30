@@ -469,7 +469,7 @@ function usage ()
 	echo "Ver 0.1.1"
 	echo ""
 	echo "-i                :Install Metasploit Framework."
-	echo "-p <password>     :password for MEtasploit databse msf user. If not provided a roandom one is generated for you."
+	echo "-p <password>     :password for MEtasploit databse msf user. If not provided a random one is generated for you."
 	echo "-g                :Install GNU GCC (Not necessary uless you wish to compile and install ruby 1.8.7 in OSX"
 	echo "-h                :This help message"
 }
