@@ -508,6 +508,10 @@ if [ $INSTALL -eq 0 ]; then
 		if [ $IGCC -eq 0 ]; then
 			install_gcc_osx
 		fi
+		print_status "#################################################################"
+		print_status "### YOU NEED TO RELOAD YOUR PROFILE BEFORE USE OF METASPLOIT! ###"
+		print_status "### RUN source ~/.bash_profile                                ###"
+		print_status "#################################################################"
 
 	elif [[ "$KVER" =~ buntu ]]; then
 		install_deps_deb
@@ -516,13 +520,13 @@ if [ $INSTALL -eq 0 ]; then
 		install_msf_linux
 		install_plugins_linux
 		install_armitage_linux
+		print_status "#################################################################"
+		print_status "### YOU NEED TO RELOAD YOUR PROFILE BEFORE USE OF METASPLOIT! ###"
+		print_status "### RUN source ~/.bashrc                                      ###"
+		print_status "#################################################################"
+
 	else
 		print_error "The script does not support this platform at this moment."
 		exit 1
 	fi
-	print_status "#################################################################"
-	print_status "### YOU NEED TO RELOAD YOUR PROFILE BEFORE USE OF METASPLOIT! ###"
-	print_status "### RUN source ~/.bash_profile                                ###"
-	print_status "#################################################################"
-
 fi
