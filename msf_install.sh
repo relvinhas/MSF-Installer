@@ -259,14 +259,14 @@ function install_msf_osx
 		done
 		print_status "Creating Database configuration YAML file."
 		echo 'production:
-	   adapter: postgresql
-	   database: msf
-	   username: msf
-	   password: $MSFPASS
-	   host: 127.0.0.1
-	   port: 5432
-	   pool: 75
-	   timeout: 5' > /usr/local/share/metasploit-framework/database.yml
+   adapter: postgresql
+   database: msf
+   username: msf
+   password: $MSFPASS
+   host: 127.0.0.1
+   port: 5432
+   pool: 75
+   timeout: 5' > /usr/local/share/metasploit-framework/database.yml
 	   print_status "setting environment variable in system profile. Password will be requiered"
 	   sudo sh -c "echo export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml >> /etc/profile"
 	   echo "export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml" >> ~/.bash_profile
