@@ -29,7 +29,7 @@ function install_armitage_osx
 		       print_error "are connected to the intertet and can reach http://www.fastandeasyhacking.com"
 		else
 			print_status "Decompressing package to /opt/armitage"
-			tar -xvzf /tmp/armitage.tgz -C /usr/local/
+			tar -xvzf /tmp/armitage.tgz -C /usr/local/share
 	    fi
 
 	    # Check if links exists and if they do not create them
@@ -94,9 +94,8 @@ if [[ "$KVER" =~ Darwin ]]; then
 	install_armitage_osx
 
 elif [[ "$KVER" =~ buntu ]]; then
-				
 	install_armitage_linux
-		
+
 else
 	print_error "The script does not support this platform at this moment."
 	exit 1
