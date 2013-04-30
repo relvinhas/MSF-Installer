@@ -35,7 +35,8 @@ function install_armitage_osx
 	    # Check if links exists and if they do not create them
 	    if [ ! -e /usr/local/bin/armitage ]; then
 	    	print_status "Linking Armitage in /usr/local/bin/armitage"
-	    	echo java -jar /usr/local/share/armitage/armitage.jar \$\* > /usr/local/bin/armitage
+	    	sh -c "echo java -jar /usr/local/share/armitage/armitage.jar \$\* > /usr/local/share/armitage/armitage"
+	    	ln -s /usr/local/share/armitage/armitage /usr/local/bin/armitage
 	    else
 	    	print_good "Armitage is already linked to /usr/local/bin/armitage"
 	    	echo java -jar /usr/local/share/armitage/armitage.jar \$\* > /usr/local/bin/armitage
