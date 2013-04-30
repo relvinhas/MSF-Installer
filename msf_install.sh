@@ -381,19 +381,19 @@ function install_msf_linux
 		done
 		print_status "Creating Database configuration YAML file."
 		sudo sh -c "echo 'production:
-	   adapter: postgresql
-	   database: msf
-	   username: msf
-	   password: $MSFPASS
-	   host: 127.0.0.1
-	   port: 5432
-	   pool: 75
-	   timeout: 5' > /usr/local/share/metasploit-framework/database.yml"
+   adapter: postgresql
+   database: msf
+   username: msf
+   password: $MSFPASS
+   host: 127.0.0.1
+   port: 5432
+   pool: 75
+   timeout: 5' > /usr/local/share/metasploit-framework/database.yml"
 	   	print_status "setting environment variable in system profile. Password will be requiered"
 	   	sudo sh -c "echo export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml >> /etc/environment"
 	   	echo "export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml" >> ~/.bashrc
 	   	PS1='$ '
-		source ~/.bash_profile
+		source ~/.bashrc
 	   	print_status "Installing required ruby gems by Framework using bundler"
 	   	cd /usr/local/share/metasploit-framework
 	   	sudo bundle install #>> $LOGFILE
