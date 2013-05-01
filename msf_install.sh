@@ -492,11 +492,11 @@ function install_ruby_rvm
     if [[ ! -e ~/.rvm/scripts/rvm ]]; then
         print_status "Installing RVM"
 
-        bash < <(curl -sk https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+        bash < <(curl -sk https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer) >> $LOGFILE 2>&1
         echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"' >> ~/.bashrc
         PS1='$ '
         source ~/.bashrc
-        print_status "Installing Ruby 1.9.3 under the name metasploit"
+        print_status "Installing Ruby 1.9.3 under the name 1.9.3-metasploit"
         ~/.rvm/bin/rvm install 1.9.3 -n metasploit >> $LOGFILE 2>&1
         if [[ $? -eq 0 ]]; then
             print_good "Installation of Ruby 1.9.3 was successful"
