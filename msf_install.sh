@@ -115,60 +115,27 @@ function check_dependencies_osx
     # Get a list of all the packages installed on the system
     PKGS=`pkgutil --pkgs`
     print_status "Verifiying that Development Tools and Java are installed:"
-    if $(echo "$PKGS" | grep -q Java) ; then
+    if [[ $PKGS =~ com.apple.pkg.JavaForMacOSX ]] ; then
         print_good "Java is intalled."
     else
         print_error "Java is not installed on this system."
-        print_error "Download and install Java from http://www.java.com"
+        print_error "Run the command java in terminal and install Apples Java"
         exit 1
     fi
 
-    if $(echo "$PKGS" | grep -q Xcode) ; then
+    if [[ $PKGS =~ com.apple.pkg.XcodeMAS ]] ; then
         print_good "Xcode is intalled."
     else
         print_error "Xcode is not installed on this system. Install from the App AppStore."
         exit 1
     fi
 
-    if $(echo "$PKGS" | grep -q com.apple.pkg.DeveloperToolsCLI) ; then
+    if [[ $PKGS =~ com.apple.pkg.DeveloperToolsCLI ]] ; then
         print_good "Command Line Development Tools is intalled."
     else
         print_error "Command Line Development Tools is not installed on this system."
         exit 1
     fi
-}
-########################################
-
-function install_gcc_osx
-{
-    print_status "Checking if the GNU GCC Compiler is installed if not installing it."
-    if [ -d /usr/local/Cellar/ ] && [ -L /usr/local/bin/gcc-4.8 ]; then
-        print_good "Latest version of the GNU GCC is installed."
-    else
-        print_status "Installing version 4.8 of the GNU GCC Compiler"
-        brew install homebrew/versions/gcc48 >> $LOGFILE 2>&1
-    fi
-
-    print_status "Checking if GCC is set as the CC Compiler."
-    if [[ ! "$(cat ~/.bash_profile)" =~ "CC=/usr/local/bin/gcc-4.8" ]]; then
-        print_status "GCC is not set as the default CC Compiler."
-        print_status "Setting GCC as the default CC Compiler."
-        echo export CC=/usr/local/bin/gcc-4.7 >> ~/.bash_profile
-        print_good "GCC set as the defult CC Compiler"
-    else
-        print_good "GCC is already set as the default CC Compiler."
-    fi
-
-    print_status "Checking GCC is set to compile for x86_64."
-    if [[ ! "$(cat ~/.bash_profile)" =~ "x86_64" ]]; then
-        print_status "x86_64 is not set as the default architecture."
-        print_status "Setting x86_64 as the default architecture."
-        echo export ARCHFLAGS=\"-arch x86_64\" >> ~/.bash_profile
-        print_good "x86_64 set as the defult architecture"
-    else
-        print_good "x86_64 is already set as the default architecture."
-    fi
-
 }
 ########################################
 
@@ -500,12 +467,11 @@ function usage ()
 {
     echo "Scritp for Installing Metasploit Framework"
     echo "By Carlos_Perez[at]darkoperator.com"
-    echo "Ver 0.1.2"
+    echo "Ver 0.1.3"
     echo ""
     echo "-i                :Install Metasploit Framework."
     echo "-p <password>     :password for MEtasploit databse msf user. If not provided a random one is generated for you."
-    echo "-g                :Install GNU GCC (Not necessary uless you wish to compile and install ruby 1.8.7 in OSX"
-    echo "-r                :Installs Ruby using RVM on Linux Systems."
+    echo "-r                :Installs Ruby using Ruby Version Manager."
     echo "-h                :This help message"
 }
 
@@ -589,11 +555,10 @@ function install_ruby_rvm
 [[ ! $1 ]] && { usage; exit 0; }
 #Variable with log file location for trobleshooting
 LOGFILE="/tmp/msfinstall$NOW.log"
-while getopts "igrp:h" options; do
+while getopts "irp:h" options; do
   case $options in
     p ) MSFPASS=$OPTARG;;
     i ) INSTALL=0;;
-    g ) IGCC=0;;
     h ) usage;;
     r ) RVM=0;;
     \? ) usage
@@ -619,9 +584,6 @@ if [ $INSTALL -eq 0 ]; then
         install_armitage_osx
         install_plugins
 
-        if [ $IGCC -eq 0 ]; then
-            install_gcc_osx
-        fi
         print_status "#################################################################"
         print_status "### YOU NEED TO RELOAD YOUR PROFILE BEFORE USE OF METASPLOIT! ###"
         print_status "### RUN source ~/.bash_profile                                ###"
