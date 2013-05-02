@@ -204,23 +204,29 @@ function install_nmap_osx
 function install_postgresql_osx
 {
     print_status "Checking if PostgreSQL is installed using Homebrew if not installing it."
+    echo "#### POSTGRESQL INSTALLATION ####" >> $LOGFILE 2>&1
     if [ -d /usr/local/Cellar/postgresql ] && [ -L /usr/local/bin/postgres ]; then
         print_good "PostgreSQL is installed."
     else
         print_status "Installing PostgresQL"
+        echo "---- Installing PostgreSQL ----" >> $LOGFILE 2>&1
         brew install postgresql >> $LOGFILE 2>&1
         if [ $? -eq 0 ]; then
+        	echo "---- Installtion of PostgreSQL successful----" >> $LOGFILE 2>&1
             print_good "Installtion of PostgreSQL was successful"
+             echo "---- Initiallating the PostgreSQL Database ----" >> $LOGFILE 2>&1
             print_status "Initiating postgres"
             initdb /usr/local/var/postgres >> $LOGFILE 2>&1
             if [ $? -eq 0 ]; then
                 print_good "Database initiation was successful"
+                echo "---- Initiallitation of PostgreSQL successful----" >> $LOGFILE 2>&1
             fi
 
             # Getting the Postgres version so as to configure startup of the databse
             PSQLVER=`psql --version | cut -d " " -f3`
-
+            echo "---- Postgres Version $PSQLVER ----" >> $LOGFILE 2>&1
             print_status "Configuring the database engine to start at logon"
+            echo "---- Starting PostgreSQL Server ----" >> $LOGFILE 2>&1
             pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start >> $LOGFILE 2>&1
             mkdir -p ~/Library/LaunchAgents
             ln -sfv /usr/local/opt/postgresql/*.plist ~/Library/LaunchAgents
@@ -228,18 +234,25 @@ function install_postgresql_osx
             sleep 5
             #launchctl load ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
             print_status "Creating the MSF Database user msf with the password provided"
+            echo "---- Postgres Version $PSQLVER ----" >> $LOGFILE 2>&1
+            echo "---- Creating Metasploit DB user ----" >> $LOGFILE 2>&1
             psql postgres -c "create role msf login password '$MSFPASS'" >> $LOGFILE 2>&1
             if [ $? -eq 0 ]; then
                 print_good "Metasploit Role named msf has been created."
+                echo "---- Creation of Metasploit user was successful ----" >> $LOGFILE 2>&1
             else
                 print_error "Failed to create the msf role"
+                echo "---- Creation of Metasploit user failed ----" >> $LOGFILE 2>&1
             fi
             print_status "Creating msf database and setting the owner to msf user"
+            echo "---- Creating Metasploit Database and assigning the role ----" >> $LOGFILE 2>&1
             createdb -O msf msf -h localhost >> $LOGFILE 2>&1
             if [ $? -eq 0 ]; then
                 print_good "Metasploit Databse named msf has been created."
+                echo "---- Database creation was successful ----" >> $LOGFILE 2>&1
             else
                 print_error "Failed to create the msf database."
+                echo "---- Database creation failed ----" >> $LOGFILE 2>&1
             fi
         fi
     fi
@@ -268,16 +281,26 @@ function install_msf_osx
    port: 5432
    pool: 75
    timeout: 5' > /usr/local/share/metasploit-framework/database.yml
-       print_status "setting environment variable in system profile. Password will be requiered"
-       sudo sh -c "echo export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml >> /etc/profile"
-       echo "export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml" >> ~/.bash_profile
-       source /etc/profile
-       source ~/.bash_profile
-       print_status "Installing required ruby gems by Framework using bundler"
-       cd /usr/local/share/metasploit-framework
-       bundle install >> $LOGFILE 2>&1
-       print_status "Starting Metasploit so as to populate de database."
-       /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
+       	print_status "setting environment variable in system profile. Password will be requiered"
+       	sudo sh -c "echo export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml >> /etc/profile"
+       	echo "export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml" >> ~/.bash_profile
+       	source /etc/profile
+       	source ~/.bash_profile
+       	cd /usr/local/share/metasploit-framework
+	   	if [[ $RVM -eq 0 ]]; then
+	        print_status "Installing required ruby gems by Framework using bundler on RVM Ruby"
+	        ~/.rvm/bin/rvm 1.9.3-metasploit do bundle install  >> $LOGFILE 2>&1
+	    else
+	        print_status "Installing required ruby gems by Framework using bundler on System Ruby"
+	        bundle install  >> $LOGFILE 2>&1
+	    fi
+	    print_status "Starting Metasploit so as to populate de database."
+	    if [[ $RVM -eq 0 ]]; then
+	        ~/.rvm/bin/rvm 1.9.3-metasploit do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
+	    else
+	        /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
+	        print_status "Finished Metasploit installation"
+	    fi
     else
         print_status "Metasploit already present."
     fi
@@ -493,11 +516,26 @@ function install_ruby_rvm
         print_status "Installing RVM"
 
         bash < <(curl -sk https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer) >> $LOGFILE 2>&1
-        echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"' >> ~/.bashrc
+        #echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"' >> ~/.bashrc
         PS1='$ '
-        source ~/.bashrc
+        if [[ $OSTYPE =~ darwin ]]; then
+        	source ~/.bash_profile
+        else
+        	source ~/.bashrc
+        fi
+
         print_status "Installing Ruby 1.9.3 under the name 1.9.3-metasploit"
-        ~/.rvm/bin/rvm install 1.9.3 -n metasploit >> $LOGFILE 2>&1
+        if [[ $OSTYPE =~ darwin ]]; then
+        	print_status "Installing necessary dependencies under OSX for Ruby 1.9.3"
+        	~/.rvm/bin/rvm requirements run
+        	print_status "Installing Readline Library"
+    		~/.rvm/bin/rvm pkg install readline
+    		print_status "Installing Ruby"
+    		~/.rvm/bin/rvm reinstall 1.9.3 --with-readline-dir=$rvm_path/usr -n metasploit
+        else
+        	~/.rvm/bin/rvm install 1.9.3 -n metasploit >> $LOGFILE 2>&1
+        fi
+
         if [[ $? -eq 0 ]]; then
             print_good "Installation of Ruby 1.9.3 was successful"
 
@@ -520,7 +558,12 @@ function install_ruby_rvm
             print_status "Ruby for Metasploit is already installed"
         else
             PS1='$ '
-            source ~/.bashrc
+            if [[ $OSTYPE =~ darwin ]]; then
+        		source ~/.bash_profile
+        	else
+        		source ~/.bashrc
+        	fi
+
             print_status "Installing Ruby 1.9.3 under the name metasploit"
             ~/.rvm/bin/rvm install 1.9.3 -n metasploit >> $LOGFILE 2>&1
             if [[ $? -eq 0 ]]; then
@@ -567,6 +610,9 @@ if [ $INSTALL -eq 0 ]; then
         check_dependencies_osx
         check_for_brew_osx
         install_ruby_osx
+        if [[ $RVM -eq 0 ]]; then
+            install_ruby_rvm
+        fi
         install_nmap_osx
         install_postgresql_osx
         install_msf_osx
@@ -579,6 +625,12 @@ if [ $INSTALL -eq 0 ]; then
         print_status "#################################################################"
         print_status "### YOU NEED TO RELOAD YOUR PROFILE BEFORE USE OF METASPLOIT! ###"
         print_status "### RUN source ~/.bash_profile                                ###"
+        if [[ $RVM -eq 0 ]]; then
+            print_status "###                                                            ###"
+            print_status "### INSTALLATION WAS USING RVM SET 1.9.3-metasploit AS DEFAULT ###"
+            print_status "### RUN rvm use 1.9.3-metasploit --default                     ###"
+            print_status "###                                                            ###"
+        fi
         print_status "#################################################################"
 
     elif [[ "$KVER" =~ buntu ]]; then
