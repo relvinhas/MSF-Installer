@@ -494,6 +494,25 @@ function install_armitage_linux
         print_good "Finished"
     fi
 }
+
+function install_oracle_java
+{
+    sudo mkdir -p /usr/local/java
+
+    CPUARCH=`uname -m`
+    if [[ $CPUARCH =~ x86_64 ]]; then
+        wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" -O /tmp/jre-7u21-linux-x64.tar.gz "http://download.oracle.com/otn-pub/java/jdk/7u21-b11/jre-7u21-linux-x64.tar.gz"
+        wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" -O /tmp/jdk-7u21-linux-i586.tar.gz "http://download.oracle.com/otn-pub/java/jdk/7u21-b11/jdk-7u21-linux-i586.tar.gz"
+        sudo tar -xvzf /tmp/jre-7u21-linux-x64.tar.gz -C /usr/local/java
+        sudo tar -xvzf /tmp/jdk-7u21-linux-i586.tar.gz -C /usr/local/java
+    else
+        wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" -O /tmp/jre-7u21-linux-i586.tar.gz "http://download.oracle.com/otn-pub/java/jdk/7u21-b11/jre-7u21-linux-i586.tar.gz"
+        wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" -O /tmp/jdk-7u21-linux-x64.tar.gz "http://download.oracle.com/otn-pub/java/jdk/7u21-b11/jdk-7u21-linux-x64.tar.gz"
+        sudo tar -xvzf /tmp/jre-7u21-linux-i586.tar.gz -C /usr/local/java
+        sudo tar -xvzf /tmp/jdk-7u21-linux-x64.tar.gz -C /usr/local/java
+    fi
+
+}
 #######################################
 
 function usage ()
