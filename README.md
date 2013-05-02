@@ -29,3 +29,9 @@ On Linux it will installs:
 * Nmap
 * Metasploit Framework
 * Armitage
+
+## ToDo
+
+* Add Armitage Update script to install process
+* Add better comments in to log file.
+* Add function to give the option of installing Oracle Java on Linux systems.
