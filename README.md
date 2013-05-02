@@ -35,3 +35,5 @@ On Linux it will installs:
 * Add Armitage Update script to install process
 * Add better comments in to log file.
 * Add function to give the option of installing Oracle Java on Linux systems.
+* Add support for CentOS 6,3 and 6.4 (RVM Only)
+* Add support for Debian 6 (RVM Only) and 7
