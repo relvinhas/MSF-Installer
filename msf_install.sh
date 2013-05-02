@@ -2,7 +2,7 @@
 
 KVER=`uname -a`
 # Variable to know if Homebrew should be installed
-MSFPASS=`openssl rand -base64 16`
+MSFPASS=`openssl rand -hex 16`
 #Variable with time of launch used for log names
 NOW=$(date +"-%b-%d-%y-%H%M%S")
 IGCC=1
