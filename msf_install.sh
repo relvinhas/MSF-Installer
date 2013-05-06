@@ -40,20 +40,41 @@ function install_armitage_osx
 {
     if [ -e /usr/bin/curl ]; then
         print_status "Downloading latest version of Armitage"
+        echo "---- Downloading the latest version of Armitage ---" >> $LOGFILE 2>&1
         curl -# -o /tmp/armitage.tgz http://www.fastandeasyhacking.com/download/armitage-latest.tgz && print_good "Finished"
         if [ $? -eq 1 ] ; then
+                echo "---- Failed to download the latest version of armitage ----" >> $LOGFILE 2>&1
                print_error "Failed to download the latest version of Armitage make sure you"
                print_error "are connected to the intertet and can reach http://www.fastandeasyhacking.com"
+               return 1
         else
             print_status "Decompressing package to /opt/armitage"
+            echo "---- Decompresing the latest version of Armitage ----" >> $LOGFILE 2>&1
             tar -xvzf /tmp/armitage.tgz -C /usr/local/share >> $LOGFILE 2>&1
+            if [ $? -eq 1 ] ; then
+                print_error "Was unable to decompress the latest version of Armitage"
+                echo "---- Decompression of Armitage failed ----" >> $LOGFILE 2>&1
+                return 1
+            fi
         fi
 
         # Check if links exists and if they do not create them
         if [ ! -e /usr/local/bin/armitage ]; then
             print_status "Creating link for Armitage in /usr/local/bin/armitage"
+            echo "---- Creating launch scrtip for Armitage and linking it ----" >> $LOGFILE 2>&1
+
             sh -c "echo java -jar /usr/local/share/armitage/armitage.jar \$\* > /usr/local/share/armitage/armitage"
+            if [ $? -eq 1 ] ; then
+                print_error "Failed to create Armitage launch script"
+                return 1
+            fi
+
             ln -s /usr/local/share/armitage/armitage /usr/local/bin/armitage
+            if [ $? -eq 1 ] ; then
+                print_error "Failed to link Armitage launch script"
+                return 1
+            fi
+
         else
             print_good "Armitage is already linked to /usr/local/bin/armitage"
             sh -c "echo java -jar /usr/local/share/armitage/armitage.jar \$\* > /usr/local/share/armitage/armitage"
@@ -299,9 +320,21 @@ function install_deps_deb
     print_status "Installing dependencies for Metasploit Framework"
     sudo apt-get -y update  >> $LOGFILE 2>&1
     sudo apt-get -y install build-essential libreadline-dev  libssl-dev libpq5 libpq-dev libreadline5 libsqlite3-dev libpcap-dev openjdk-7-jre subversion git-core autoconf postgresql pgadmin3 curl zlib1g-dev libxml2-dev libxslt1-dev vncviewer libyaml-dev ruby1.9.3 sqlite3 libgdbm-dev libncurses5-dev libtool bison libffi-dev>> $LOGFILE 2>&1
+    if [ $? -eq 1 ] ; then
+        echo "---- Failed to download and install depencies ----" >> $LOGFILE 2>&1
+        print_error "Failed to download and install the depencies for running Metasploit Framework"
+        print_error "Make sure you have the proper permissions and able to download and install packages"
+        print_error "for the distribution you are using."
+        exit 1
+    fi
     print_status "Finished installing the dependencies."
     print_status "Installing base Ruby Gems"
     sudo gem install wirble sqlite3 bundler >> $LOGFILE 2>&1
+    if [ $? -eq 1 ] ; then
+        echo "---- Failed to download and install base Ruby Gems ----" >> $LOGFILE 2>&1
+        print_error "Failed to download and install Ruby Gems for running Metasploit Framework"
+        exit 1
+    fi
     print_status "Finished installing the base gems."
 }
 #######################################
@@ -312,14 +345,30 @@ function install_nmap_linux
         print_status "Downloading and Compiling the latest version if Nmap"
         print_status "Downloading from SVN the latest version of Nmap"
         cd /usr/src
+        echo "---- Downloading the latest version of NMap via SVN ----" >> $LOGFILE 2>&1
         sudo svn co https://svn.nmap.org/nmap >> $LOGFILE 2>&1
+        if [ $? -eq 1 ] ; then
+            print_error "Failed to download the latest version of Nmap"
+            return 1
+        fi
         cd nmap
         print_status "Configuring Nmap"
+        echo "---- Configuring NMap settings ----" >> $LOGFILE 2>&1
         sudo ./configure >> $LOGFILE 2>&1
         print_status "Compiling the latest version of Nmap"
+        echo "---- Compiling NMap from source ----" >> $LOGFILE 2>&1
         sudo make >> $LOGFILE 2>&1
+        if [ $? -eq 1 ] ; then
+            print_error "Failed to compile NMap"
+            return 1
+        fi
         print_status "Installing the latest version of Nmap"
+        echo "---- Installing NMap ----" >> $LOGFILE 2>&1
         sudo make install >> $LOGFILE 2>&1
+        if [ $? -eq 1 ] ; then
+            print_error "Failed to install NMap"
+            return 1
+        fi
         sudo make clean  >> $LOGFILE 2>&1
     else
         print_status "Nmap is already installed on the system"
@@ -467,7 +516,7 @@ function usage ()
 {
     echo "Scritp for Installing Metasploit Framework"
     echo "By Carlos_Perez[at]darkoperator.com"
-    echo "Ver 0.1.3"
+    echo "Ver 0.1.4"
     echo ""
     echo "-i                :Install Metasploit Framework."
     echo "-p <password>     :password for MEtasploit databse msf user. If not provided a random one is generated for you."
@@ -589,7 +638,7 @@ if [ $INSTALL -eq 0 ]; then
         print_status "### RUN source ~/.bash_profile                                ###"
         if [[ $RVM -eq 0 ]]; then
             print_status "###                                                            ###"
-            print_status "### INSTALLATION WAS USING RVM SET 1.9.3-metasploit AS DEFAULT ###"
+            print_status "### INSTALLATION WAS USING RVM, SET 1.9.3-metasploit AS DEFAULT ###"
             print_status "### RUN rvm use 1.9.3-metasploit --default                     ###"
             print_status "###                                                            ###"
         fi
@@ -614,10 +663,47 @@ if [ $INSTALL -eq 0 ]; then
             print_status "###                                                            ###"
             print_status "### INSTALLATION WAS USING RVM SET 1.9.3-metasploit AS DEFAULT ###"
             print_status "### RUN rvm use 1.9.3-metasploit --default                     ###"
-            print_status "###                                                            ###"
         fi
+        print_status "### When launching teamserver and armitage with sudo use the   ###"
+        print_status "### use the -E option to make sure the MSF Database variable   ###"
+        print_status "### is properly set.                                           ###"
+        print_status "###                                                            ###"
         print_status "##################################################################"
 
+    elif [[ "$KVER" =~ Debian ]]; then
+        if [[ "$(cat /etc/debian_version )" =~ 7.0  ]]; then
+            if [[ $( cat /etc/apt/sources.list | grep -E '^deb cdrom' ) ]]; then
+                print_error "Source in /etc/apt/sources.list is set to CD or DVD"
+                print_error "Comment out the line and only use network sources."
+                exit 1
+            fi
+            install_deps_deb
+
+            if [[ $RVM -eq 0 ]]; then
+                install_ruby_rvm
+            fi
+
+            install_nmap_linux
+            configure_psql_deb
+            install_msf_linux
+            install_plugins_linux
+            install_armitage_linux
+            print_status "##################################################################"
+            print_status "### YOU NEED TO RELOAD YOUR PROFILE BEFORE USE OF METASPLOIT!  ###"
+            print_status "### RUN source ~/.bashrc                                       ###"
+            if [[ $RVM -eq 0 ]]; then
+                print_status "###                                                            ###"
+                print_status "### INSTALLATION WAS USING RVM SET 1.9.3-metasploit AS DEFAULT ###"
+                print_status "### RUN rvm use 1.9.3-metasploit --default                     ###"
+            fi
+            print_status "### When launching teamserver and armitage with sudo use the   ###"
+            print_status "### use the -E option to make sure the MSF Database variable   ###"
+            print_status "### is properly set.                                           ###"
+            print_status "###                                                            ###"
+            print_status "##################################################################"
+        else
+            print_error "This version of Debian is not supported. Only Debian 7.0 is supported"
+        fi
     else
         print_error "The script does not support this platform at this moment."
         exit 1
