@@ -9,6 +9,7 @@ The script will install Metasploit Framework and dependencies on:
 
 * OSX Mountain Lion with Apple Java, Xcode and Xcode Command Line Development tools component
 * Ubuntu 12.04 and Ubuntu 13.04
+* Debian 7.0
 
 ##Components
 
