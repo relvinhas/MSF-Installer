@@ -28,7 +28,7 @@ function install_armitage_osx
 		       print_error "Failed to download the latest version of Armitage make sure you"
 		       print_error "are connected to the intertet and can reach http://www.fastandeasyhacking.com"
 		else
-			print_status "Decompressing package to /opt/armitage"
+			print_status "Decompressing package to /usr/local/share/armitage"
 			tar -xvzf /tmp/armitage.tgz -C /usr/local/share
 	    fi
 
@@ -64,7 +64,7 @@ function install_armitage_linux
 		       print_error "Failed to download the latest version of Armitage make sure you"
 		       print_error "are connected to the intertet and can reach http://www.fastandeasyhacking.com"
 		else
-			print_status "Decompressing package to /opt/armitage"
+			print_status "Decompressing package to /usr/local/share/armitage"
 			sudo tar -xvzf /tmp/armitage.tgz -C /usr/local/share >>outfile 2>&1
 	    fi
 
