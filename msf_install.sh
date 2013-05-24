@@ -48,7 +48,7 @@ function install_armitage_osx
                print_error "are connected to the intertet and can reach http://www.fastandeasyhacking.com"
                return 1
         else
-            print_status "Decompressing package to /opt/armitage"
+            print_status "Decompressing package to /usr/local/share/armitage"
             echo "---- Decompresing the latest version of Armitage ----" >> $LOGFILE 2>&1
             tar -xvzf /tmp/armitage.tgz -C /usr/local/share >> $LOGFILE 2>&1
             if [ $? -eq 1 ] ; then
@@ -485,7 +485,7 @@ function install_armitage_linux
                print_error "Failed to download the latest version of Armitage make sure you"
                print_error "are connected to the intertet and can reach http://www.fastandeasyhacking.com"
         else
-            print_status "Decompressing package to /opt/armitage"
+            print_status "Decompressing package to /usr/local/share/armitage"
             sudo tar -xvzf /tmp/armitage.tgz -C /usr/local/share >> $LOGFILE 2>&1
         fi
 
