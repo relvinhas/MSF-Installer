@@ -295,7 +295,7 @@ function install_msf_osx
 }
 ########################################
 
-function install_plugins
+function install_plugins_osx
 {
     print_status "Installing addiotional Metasploit plugins"
     print_status "Installing Pentest plugin"
@@ -631,7 +631,7 @@ if [ $INSTALL -eq 0 ]; then
         install_postgresql_osx
         install_msf_osx
         install_armitage_osx
-        install_plugins
+        install_plugins_osx
 
         print_status "#################################################################"
         print_status "### YOU NEED TO RELOAD YOUR PROFILE BEFORE USE OF METASPLOIT! ###"
