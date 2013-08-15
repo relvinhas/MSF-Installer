@@ -26,7 +26,7 @@ function install_armitage_osx
 	curl -# -o /tmp/armitage.tgz http://www.fastandeasyhacking.com/download/armitage-latest.tgz && print_good "Finished"
 	if [ $? -eq 1 ] ; then
             print_error "Failed to download the latest version of Armitage make sure you"
-	    print_error "are connected to the intertet and can reach http://www.fastandeasyhacking.com"
+	    print_error "are connected to the internet and can reach http://www.fastandeasyhacking.com"
 	else
 	    print_status "Decompressing package to /usr/local/share/armitage"
 	    tar -xvzf /tmp/armitage.tgz -C /usr/local/share
@@ -43,7 +43,7 @@ function install_armitage_osx
 	fi
 
 	if [ ! -e /usr/local/bin/teamserver ]; then
-	    print_status "CopyingTeamserver in /usr/local/bin/teamserver"
+	    print_status "Copying Teamserver in /usr/local/bin/teamserver"
 	    ln -s /usr/local/armitage/teamserver /usr/local/bin/teamserver
 	    perl -pi -e 's/armitage.jar/\/usr\/local\/share\/armitage\/armitage.jar/g' /usr/local/share/armitage/teamserver
 	else
@@ -62,7 +62,7 @@ function install_armitage_linux
 	curl -# -o /tmp/armitage.tgz http://www.fastandeasyhacking.com/download/armitage-latest.tgz && print_good "Finished"
 	if [ $? -eq 1 ] ; then
 	    print_error "Failed to download the latest version of Armitage make sure you"
-	    print_error "are connected to the intertet and can reach http://www.fastandeasyhacking.com"
+	    print_error "are connected to the internet and can reach http://www.fastandeasyhacking.com"
         else
 	    print_status "Decompressing package to /usr/local/share/armitage"
 	    sudo tar -xvzf /tmp/armitage.tgz -C /usr/local/share >>outfile 2>&1

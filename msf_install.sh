@@ -30,7 +30,7 @@ function print_status ()
 function check_root
 {
     if [ "$(id -u)" != "0" ]; then
-       print_error "This step mus be ran as root"
+       print_error "This step must be ran as root"
        exit 1
     fi
 }
@@ -45,11 +45,11 @@ function install_armitage_osx
         if [ $? -eq 1 ] ; then
                 echo "---- Failed to download the latest version of armitage ----" >> $LOGFILE 2>&1
                print_error "Failed to download the latest version of Armitage make sure you"
-               print_error "are connected to the intertet and can reach http://www.fastandeasyhacking.com"
+               print_error "are connected to the internert and can reach http://www.fastandeasyhacking.com"
                return 1
         else
             print_status "Decompressing package to /usr/local/share/armitage"
-            echo "---- Decompresing the latest version of Armitage ----" >> $LOGFILE 2>&1
+            echo "---- Decompressing the latest version of Armitage ----" >> $LOGFILE 2>&1
             tar -xvzf /tmp/armitage.tgz -C /usr/local/share >> $LOGFILE 2>&1
             if [ $? -eq 1 ] ; then
                 print_error "Was unable to decompress the latest version of Armitage"
@@ -61,7 +61,7 @@ function install_armitage_osx
         # Check if links exists and if they do not create them
         if [ ! -e /usr/local/bin/armitage ]; then
             print_status "Creating link for Armitage in /usr/local/bin/armitage"
-            echo "---- Creating launch scrtip for Armitage and linking it ----" >> $LOGFILE 2>&1
+            echo "---- Creating launch script for Armitage and linking it ----" >> $LOGFILE 2>&1
 
             sh -c "echo java -jar /usr/local/share/armitage/armitage.jar \$\* > /usr/local/share/armitage/armitage"
             if [ $? -eq 1 ] ; then
@@ -95,7 +95,7 @@ function install_armitage_osx
 
 function check_for_brew_osx
 {
-    print_status "Verifiying that Homebrew is installed:"
+    print_status "Verifying that Homebrew is installed:"
     if [ -e /usr/local/bin/brew ]; then
         print_good "Homebrew is installed on the system, updating formulas."
         /usr/local/bin/brew update >> $LOGFILE 2>&1
@@ -135,19 +135,19 @@ function check_dependencies_osx
 {
     # Get a list of all the packages installed on the system
     PKGS=`pkgutil --pkgs`
-    print_status "Verifiying that Development Tools and Java are installed:"
+    print_status "Verifying that Development Tools and Java are installed:"
     if [[ $PKGS =~ com.apple.pkg.JavaForMacOSX ]] ; then
-        print_good "Java is intalled."
+        print_good "Java is installed."
     else
         print_error "Java is not installed on this system."
-        print_error "Run the command java in terminal and install Apples Java"
+        print_error "Run the command java in Terminal and install Apple's Java"
         exit 1
     fi
 
     if [[ $PKGS =~ com.apple.pkg.XcodeMAS ]] ; then
-        print_good "Xcode is intalled."
+        print_good "Xcode is installed."
     else
-        print_error "Xcode is not installed on this system. Install from the App AppStore."
+        print_error "Xcode is not installed on this system. Install from the Apple AppStore."
         exit 1
     fi
 
@@ -162,7 +162,7 @@ function check_dependencies_osx
 
 function install_ruby_osx
 {
-    print_status "Checking if Ruby 1.9.3 is installed if not installing it."
+    print_status "Checking if Ruby 1.9.3 is installed, if not installing it."
     if [ -d /usr/local/Cellar/ruby193 ] && [ -L /usr/local/bin/ruby ]; then
         print_good "Correct version of Ruby is installed."
     else
@@ -172,14 +172,14 @@ function install_ruby_osx
         echo PATH=/usr/local/opt/ruby193/bin:$PATH >> ~/.bash_profile
         source  ~/.bash_profile
     fi
-    print_status "Inatlling the bundler and SQLite3 Gems"
+    print_status "Installing the bundler and SQLite3 Gems"
     gem install bundler sqlite3 >> $LOGFILE 2>&1
 }
 ########################################
 
 function install_nmap_osx
 {
-    print_status "Checking if Nmap is installed using Homebrew if not installing it."
+    print_status "Checking if Nmap is installed, using Homebrew to install it if not."
     if [ -d /usr/local/Cellar/nmap ] && [ -L /usr/local/bin/nmap ]; then
         print_good "Nmap is installed."
     else
@@ -191,23 +191,23 @@ function install_nmap_osx
 
 function install_postgresql_osx
 {
-    print_status "Checking if PostgreSQL is installed using Homebrew if not installing it."
+    print_status "Checking if PostgreSQL is installed, using Homebrew to install it if not."
     echo "#### POSTGRESQL INSTALLATION ####" >> $LOGFILE 2>&1
     if [ -d /usr/local/Cellar/postgresql ] && [ -L /usr/local/bin/postgres ]; then
         print_good "PostgreSQL is installed."
     else
-        print_status "Installing PostgresQL"
+        print_status "Installing PostgreSQL"
         echo "---- Installing PostgreSQL ----" >> $LOGFILE 2>&1
         brew install postgresql >> $LOGFILE 2>&1
         if [ $? -eq 0 ]; then
-        	echo "---- Installtion of PostgreSQL successful----" >> $LOGFILE 2>&1
-            print_good "Installtion of PostgreSQL was successful"
-             echo "---- Initiallating the PostgreSQL Database ----" >> $LOGFILE 2>&1
+        	echo "---- Installation of PostgreSQL successful----" >> $LOGFILE 2>&1
+            print_good "Installation of PostgreSQL was successful"
+             echo "---- Initiating the PostgreSQL Database ----" >> $LOGFILE 2>&1
             print_status "Initiating postgres"
             initdb /usr/local/var/postgres >> $LOGFILE 2>&1
             if [ $? -eq 0 ]; then
                 print_good "Database initiation was successful"
-                echo "---- Initiallitation of PostgreSQL successful----" >> $LOGFILE 2>&1
+                echo "---- Initiation of PostgreSQL successful----" >> $LOGFILE 2>&1
             fi
 
             # Getting the Postgres version so as to configure startup of the databse
@@ -253,7 +253,7 @@ function install_msf_osx
     if [[ ! -d /usr/local/share/metasploit-framework ]]; then
         print_status "Cloning latest version of Metasploit Framework"
         git clone https://github.com/rapid7/metasploit-framework.git /usr/local/share/metasploit-framework >> $LOGFILE 2>&1
-        print_status "Linking metasploit commands."
+        print_status "Linking Metasploit commands."
         cd /usr/local/share/metasploit-framework
         for MSF in $(ls msf*); do
             print_status "linking $MSF command"
@@ -282,7 +282,7 @@ function install_msf_osx
 	        print_status "Installing required ruby gems by Framework using bundler on System Ruby"
 	        bundle install  >> $LOGFILE 2>&1
 	    fi
-	    print_status "Starting Metasploit so as to populate de database."
+	    print_status "Starting Metasploit so as to populate the database."
 	    if [[ $RVM -eq 0 ]]; then
 	        ~/.rvm/bin/rvm 1.9.3-metasploit do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
 	    else
@@ -297,7 +297,7 @@ function install_msf_osx
 
 function install_plugins_osx
 {
-    print_status "Installing addiotional Metasploit plugins"
+    print_status "Installing additional Metasploit plugins"
     print_status "Installing Pentest plugin"
     curl -# -o /usr/local/share/metasploit-framework/plugins/pentest.rb https://raw.github.com/darkoperator/Metasploit-Plugins/master/pentest.rb
     if [ $? -eq 0 ]; then
@@ -321,8 +321,8 @@ function install_deps_deb
     sudo apt-get -y update  >> $LOGFILE 2>&1
     sudo apt-get -y install build-essential libreadline-dev  libssl-dev libpq5 libpq-dev libreadline5 libsqlite3-dev libpcap-dev openjdk-7-jre subversion git-core autoconf postgresql pgadmin3 curl zlib1g-dev libxml2-dev libxslt1-dev vncviewer libyaml-dev ruby1.9.3 sqlite3 libgdbm-dev libncurses5-dev libtool bison libffi-dev>> $LOGFILE 2>&1
     if [ $? -eq 1 ] ; then
-        echo "---- Failed to download and install depencies ----" >> $LOGFILE 2>&1
-        print_error "Failed to download and install the depencies for running Metasploit Framework"
+        echo "---- Failed to download and install dependencies ----" >> $LOGFILE 2>&1
+        print_error "Failed to download and install the dependencies for running Metasploit Framework"
         print_error "Make sure you have the proper permissions and able to download and install packages"
         print_error "for the distribution you are using."
         exit 1
@@ -342,7 +342,7 @@ function install_deps_deb
 function install_nmap_linux
 {
     if [[ ! -e /usr/local/bin/nmap ]]; then
-        print_status "Downloading and Compiling the latest version if Nmap"
+        print_status "Downloading and Compiling the latest version of Nmap"
         print_status "Downloading from SVN the latest version of Nmap"
         cd /usr/src
         echo "---- Downloading the latest version of NMap via SVN ----" >> $LOGFILE 2>&1
@@ -353,20 +353,20 @@ function install_nmap_linux
         fi
         cd nmap
         print_status "Configuring Nmap"
-        echo "---- Configuring NMap settings ----" >> $LOGFILE 2>&1
+        echo "---- Configuring Nmap settings ----" >> $LOGFILE 2>&1
         sudo ./configure >> $LOGFILE 2>&1
         print_status "Compiling the latest version of Nmap"
         echo "---- Compiling NMap from source ----" >> $LOGFILE 2>&1
         sudo make >> $LOGFILE 2>&1
         if [ $? -eq 1 ] ; then
-            print_error "Failed to compile NMap"
+            print_error "Failed to compile Nmap"
             return 1
         fi
         print_status "Installing the latest version of Nmap"
-        echo "---- Installing NMap ----" >> $LOGFILE 2>&1
+        echo "---- Installing Nmap ----" >> $LOGFILE 2>&1
         sudo make install >> $LOGFILE 2>&1
         if [ $? -eq 1 ] ; then
-            print_error "Failed to install NMap"
+            print_error "Failed to install Nmap"
             return 1
         fi
         sudo make clean  >> $LOGFILE 2>&1
@@ -396,7 +396,7 @@ function configure_psql_deb
         print_status "Creating msf database and setting the owner to msf user"
         sudo -u postgres psql postgres -c "CREATE DATABASE msf OWNER msf;" >> $LOGFILE 2>&1
         if [ $? -eq 0 ]; then
-            print_good "Metasploit Databse named msf has been created."
+            print_good "Metasploit database named msf has been created."
         else
             print_error "Failed to create the msf database."
         fi
@@ -443,7 +443,7 @@ function install_msf_linux
             print_status "Installing required ruby gems by Framework using bundler on System Ruby"
             sudo bundle install  >> $LOGFILE 2>&1
         fi
-        print_status "Starting Metasploit so as to populate de database."
+        print_status "Starting Metasploit so as to populate the database."
         if [[ $RVM -eq 0 ]]; then
             ~/.rvm/bin/rvm 1.9.3-metasploit do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
         else
@@ -458,8 +458,8 @@ function install_msf_linux
 
 function install_plugins_linux
 {
-    print_status "Installing addiotional Metasploit plugins"
-    print_status "Installing Pentest plugin"
+    print_status "Installing additional Metasploit plugins"
+    print_status "Installing pentest plugin"
     sudo curl -# -o /usr/local/share/metasploit-framework/plugins/pentest.rb https://raw.github.com/darkoperator/Metasploit-Plugins/master/pentest.rb
     if [ $? -eq 0 ]; then
         print_good "The pentest plugin has been installed."
@@ -483,7 +483,7 @@ function install_armitage_linux
         curl -# -o /tmp/armitage.tgz http://www.fastandeasyhacking.com/download/armitage-latest.tgz && print_good "Finished"
         if [ $? -eq 1 ] ; then
                print_error "Failed to download the latest version of Armitage make sure you"
-               print_error "are connected to the intertet and can reach http://www.fastandeasyhacking.com"
+               print_error "are connected to the internet and can reach http://www.fastandeasyhacking.com"
         else
             print_status "Decompressing package to /usr/local/share/armitage"
             sudo tar -xvzf /tmp/armitage.tgz -C /usr/local/share >> $LOGFILE 2>&1
@@ -514,12 +514,12 @@ function install_armitage_linux
 
 function usage ()
 {
-    echo "Scritp for Installing Metasploit Framework"
+    echo "Script for Installing Metasploit Framework"
     echo "By Carlos_Perez[at]darkoperator.com"
     echo "Ver 0.1.4"
     echo ""
     echo "-i                :Install Metasploit Framework."
-    echo "-p <password>     :password for MEtasploit databse msf user. If not provided a random one is generated for you."
+    echo "-p <password>     :password for Metasploit databse msf user. If not provided a random one is generated for you."
     echo "-r                :Installs Ruby using Ruby Version Manager."
     echo "-h                :This help message"
 }
