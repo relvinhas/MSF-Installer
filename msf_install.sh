@@ -30,8 +30,8 @@ function print_status ()
 function check_root
 {
     if [ "$(id -u)" != "0" ]; then
-       print_error "This step must be ran as root"
-       exit 1
+        print_error "This step must be ran as root"
+        exit 1
     fi
 }
 ########################################
@@ -43,43 +43,39 @@ function install_armitage_osx
         echo "---- Downloading the latest version of Armitage ---" >> $LOGFILE 2>&1
         curl -# -o /tmp/armitage.tgz http://www.fastandeasyhacking.com/download/armitage-latest.tgz && print_good "Finished"
         if [ $? -eq 1 ] ; then
-                echo "---- Failed to download the latest version of armitage ----" >> $LOGFILE 2>&1
-               print_error "Failed to download the latest version of Armitage make sure you"
-               print_error "are connected to the internert and can reach http://www.fastandeasyhacking.com"
-               return 1
+            echo "---- Failed to download the latest version of armitage ----" >> $LOGFILE 2>&1
+            print_error "Failed to download the latest version of Armitage make sure you"
+            print_error "are connected to the internert and can reach http://www.fastandeasyhacking.com"
+            return 1
         else
             print_status "Decompressing package to /usr/local/share/armitage"
             echo "---- Decompressing the latest version of Armitage ----" >> $LOGFILE 2>&1
             tar -xvzf /tmp/armitage.tgz -C /usr/local/share >> $LOGFILE 2>&1
-            if [ $? -eq 1 ] ; then
-                print_error "Was unable to decompress the latest version of Armitage"
-                echo "---- Decompression of Armitage failed ----" >> $LOGFILE 2>&1
-                return 1
-            fi
+        if [ $? -eq 1 ] ; then
+            print_error "Was unable to decompress the latest version of Armitage"
+            echo "---- Decompression of Armitage failed ----" >> $LOGFILE 2>&1
+            return 1
         fi
+    fi
 
-        # Check if links exists and if they do not create them
-        if [ ! -e /usr/local/bin/armitage ]; then
-            print_status "Creating link for Armitage in /usr/local/bin/armitage"
-            echo "---- Creating launch script for Armitage and linking it ----" >> $LOGFILE 2>&1
-
-            sh -c "echo java -jar /usr/local/share/armitage/armitage.jar \$\* > /usr/local/share/armitage/armitage"
-            if [ $? -eq 1 ] ; then
-                print_error "Failed to create Armitage launch script"
-                return 1
-            fi
-
-            ln -s /usr/local/share/armitage/armitage /usr/local/bin/armitage
-            if [ $? -eq 1 ] ; then
-                print_error "Failed to link Armitage launch script"
-                return 1
-            fi
-
-        else
-            print_good "Armitage is already linked to /usr/local/bin/armitage"
-            sh -c "echo java -jar /usr/local/share/armitage/armitage.jar \$\* > /usr/local/share/armitage/armitage"
+    # Check if links exists and if they do not create them
+    if [ ! -e /usr/local/bin/armitage ]; then
+        print_status "Creating link for Armitage in /usr/local/bin/armitage"
+        echo "---- Creating launch script for Armitage and linking it ----" >> $LOGFILE 2>&1
+        sh -c "echo java -jar /usr/local/share/armitage/armitage.jar \$\* > /usr/local/share/armitage/armitage"
+        if [ $? -eq 1 ] ; then
+            print_error "Failed to create Armitage launch script"
+            return 1
         fi
-
+        ln -s /usr/local/share/armitage/armitage /usr/local/bin/armitage
+        if [ $? -eq 1 ] ; then
+            print_error "Failed to link Armitage launch script"
+            return 1
+        fi
+    else
+    print_good "Armitage is already linked to /usr/local/bin/armitage"
+    sh -c "echo java -jar /usr/local/share/armitage/armitage.jar \$\* > /usr/local/share/armitage/armitage"
+    fi
         if [ ! -e /usr/local/bin/teamserver ]; then
             print_status "Creating link for Teamserver in /usr/local/bin/teamserver"
             ln -s /usr/local/share/armitage/teamserver /usr/local/bin/teamserver
@@ -111,10 +107,10 @@ function check_for_brew_osx
                 echo PATH=/usr/local/bin:/usr/local/sbin:$PATH >> ~/.bash_profile
                 source  ~/.bash_profile
             fi
-         else
+        else
             echo PATH=/usr/local/bin:/usr/local/sbin:$PATH >> ~/.bash_profile
             source  ~/.bash_profile
-         fi
+        fi
     else
 
         print_status "Installing Homebrew"
@@ -126,7 +122,6 @@ function check_for_brew_osx
             echo PATH=/usr/local/bin:/usr/local/sbin:$PATH >> ~/.bash_profile
             source  ~/.bash_profile
         fi
-
     fi
 }
 ########################################
@@ -136,11 +131,11 @@ function check_dependencies_osx
     # Get a list of all the packages installed on the system
     PKGS=`pkgutil --pkgs`
     print_status "Verifying that Development Tools and Java are installed:"
-    if [[ $PKGS =~ com.apple.pkg.JavaForMacOSX ]] ; then
+    if [[ $PKGS =~ 'com.apple.pkg.JavaForMacOSX' || $PKGS =~ com.oracle.jdk* ]] ; then
         print_good "Java is installed."
     else
         print_error "Java is not installed on this system."
-        print_error "Run the command java in Terminal and install Apple's Java"
+        print_error "Run the command java in Terminal and install Java"
         exit 1
     fi
 
@@ -151,7 +146,7 @@ function check_dependencies_osx
         exit 1
     fi
 
-    if [[ $PKGS =~ com.apple.pkg.DeveloperToolsCLI ]] ; then
+    if [[ $PKGS =~ com.apple.pkg.DeveloperToolsCLI || $PKGS =~ com.apple.pkg.CLTools_Executables ]] ; then
         print_good "Command Line Development Tools is intalled."
     else
         print_error "Command Line Development Tools is not installed on this system."
@@ -198,11 +193,11 @@ function install_postgresql_osx
     else
         print_status "Installing PostgreSQL"
         echo "---- Installing PostgreSQL ----" >> $LOGFILE 2>&1
-        brew install postgresql >> $LOGFILE 2>&1
+        brew install postgresql --without-osso-uuid >> $LOGFILE 2>&1
         if [ $? -eq 0 ]; then
-        	echo "---- Installation of PostgreSQL successful----" >> $LOGFILE 2>&1
+            echo "---- Installation of PostgreSQL successful----" >> $LOGFILE 2>&1
             print_good "Installation of PostgreSQL was successful"
-             echo "---- Initiating the PostgreSQL Database ----" >> $LOGFILE 2>&1
+            echo "---- Initiating the PostgreSQL Database ----" >> $LOGFILE 2>&1
             print_status "Initiating postgres"
             initdb /usr/local/var/postgres >> $LOGFILE 2>&1
             if [ $? -eq 0 ]; then
@@ -234,7 +229,7 @@ function install_postgresql_osx
             fi
             print_status "Creating msf database and setting the owner to msf user"
             echo "---- Creating Metasploit Database and assigning the role ----" >> $LOGFILE 2>&1
-            createdb -O msf msf -h localhost >> $LOGFILE 2>&1
+             createdb -O msf msf -h localhost >> $LOGFILE 2>&1
             if [ $? -eq 0 ]; then
                 print_good "Metasploit Databse named msf has been created."
                 echo "---- Database creation was successful ----" >> $LOGFILE 2>&1
@@ -257,38 +252,38 @@ function install_msf_osx
         cd /usr/local/share/metasploit-framework
         for MSF in $(ls msf*); do
             print_status "linking $MSF command"
-            ln -s /usr/local/share/metasploit-framework/$MSF /usr/local/bin/$MSF
+        ln -s /usr/local/share/metasploit-framework/$MSF /usr/local/bin/$MSF
         done
         print_status "Creating Database configuration YAML file."
         echo 'production:
-   adapter: postgresql
-   database: msf
-   username: msf
-   password: $MSFPASS
-   host: 127.0.0.1
-   port: 5432
-   pool: 75
-   timeout: 5' > /usr/local/share/metasploit-framework/database.yml
-       	print_status "setting environment variable in system profile. Password will be requiered"
-       	sudo sh -c "echo export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml >> /etc/profile"
-       	echo "export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml" >> ~/.bash_profile
-       	source /etc/profile
-       	source ~/.bash_profile
-       	cd /usr/local/share/metasploit-framework
-	   	if [[ $RVM -eq 0 ]]; then
-	        print_status "Installing required ruby gems by Framework using bundler on RVM Ruby"
-	        ~/.rvm/bin/rvm 1.9.3-metasploit do bundle install  >> $LOGFILE 2>&1
-	    else
-	        print_status "Installing required ruby gems by Framework using bundler on System Ruby"
-	        bundle install  >> $LOGFILE 2>&1
-	    fi
-	    print_status "Starting Metasploit so as to populate the database."
-	    if [[ $RVM -eq 0 ]]; then
-	        ~/.rvm/bin/rvm 1.9.3-metasploit do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
-	    else
-	        /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
-	        print_status "Finished Metasploit installation"
-	    fi
+ adapter: postgresql
+ database: msf
+ username: msf
+ password: $MSFPASS
+ host: 127.0.0.1
+ port: 5432
+ pool: 75
+ timeout: 5' > /usr/local/share/metasploit-framework/database.yml
+        print_status "setting environment variable in system profile. Password will be requiered"
+        sudo sh -c "echo export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml >> /etc/profile"
+        echo "export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml" >> ~/.bash_profile
+        source /etc/profile
+        source ~/.bash_profile
+        cd /usr/local/share/metasploit-framework
+        if [[ $RVM -eq 0 ]]; then
+            print_status "Installing required ruby gems by Framework using bundler on RVM Ruby"
+            ~/.rvm/bin/rvm 1.9.3 do bundle install  >> $LOGFILE 2>&1
+        else
+            print_status "Installing required ruby gems by Framework using bundler on System Ruby"
+            bundle install  >> $LOGFILE 2>&1
+        fi
+        print_status "Starting Metasploit so as to populate the database."
+        if [[ $RVM -eq 0 ]]; then
+            ~/.rvm/bin/rvm 1.9.3 do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
+        else
+            /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
+            print_status "Finished Metasploit installation"
+        fi
     else
         print_status "Metasploit already present."
     fi
@@ -347,28 +342,28 @@ function install_nmap_linux
         cd /usr/src
         echo "---- Downloading the latest version of NMap via SVN ----" >> $LOGFILE 2>&1
         sudo svn co https://svn.nmap.org/nmap >> $LOGFILE 2>&1
-        if [ $? -eq 1 ] ; then
-            print_error "Failed to download the latest version of Nmap"
-            return 1
-        fi
-        cd nmap
-        print_status "Configuring Nmap"
-        echo "---- Configuring Nmap settings ----" >> $LOGFILE 2>&1
-        sudo ./configure >> $LOGFILE 2>&1
-        print_status "Compiling the latest version of Nmap"
-        echo "---- Compiling NMap from source ----" >> $LOGFILE 2>&1
-        sudo make >> $LOGFILE 2>&1
-        if [ $? -eq 1 ] ; then
-            print_error "Failed to compile Nmap"
-            return 1
-        fi
-        print_status "Installing the latest version of Nmap"
-        echo "---- Installing Nmap ----" >> $LOGFILE 2>&1
-        sudo make install >> $LOGFILE 2>&1
-        if [ $? -eq 1 ] ; then
-            print_error "Failed to install Nmap"
-            return 1
-        fi
+    if [ $? -eq 1 ] ; then
+        print_error "Failed to download the latest version of Nmap"
+        return 1
+    fi
+    cd nmap
+    print_status "Configuring Nmap"
+    echo "---- Configuring Nmap settings ----" >> $LOGFILE 2>&1
+    sudo ./configure >> $LOGFILE 2>&1
+    print_status "Compiling the latest version of Nmap"
+    echo "---- Compiling NMap from source ----" >> $LOGFILE 2>&1
+    sudo make >> $LOGFILE 2>&1
+    if [ $? -eq 1 ] ; then
+        print_error "Failed to compile Nmap"
+        return 1
+    fi
+    print_status "Installing the latest version of Nmap"
+    echo "---- Installing Nmap ----" >> $LOGFILE 2>&1
+    sudo make install >> $LOGFILE 2>&1
+    if [ $? -eq 1 ] ; then
+        print_error "Failed to install Nmap"
+        return 1
+    fi
         sudo make clean  >> $LOGFILE 2>&1
     else
         print_status "Nmap is already installed on the system"
@@ -385,7 +380,7 @@ function configure_psql_deb
         if [ $? -eq 0 ]; then
             print_good "Metasploit Role named msf has been created."
         else
-            print_error "Failed to create the msf role"
+        print_error "Failed to create the msf role"
         fi
     else
         print_status "The msf role already exists."
@@ -421,14 +416,14 @@ function install_msf_linux
         done
         print_status "Creating Database configuration YAML file."
         sudo sh -c "echo 'production:
-   adapter: postgresql
-   database: msf
-   username: msf
-   password: $MSFPASS
-   host: 127.0.0.1
-   port: 5432
-   pool: 75
-   timeout: 5' > /usr/local/share/metasploit-framework/database.yml"
+  adapter: postgresql
+  database: msf
+  username: msf
+  password: $MSFPASS
+  host: 127.0.0.1
+  port: 5432
+  pool: 75
+  timeout: 5' > /usr/local/share/metasploit-framework/database.yml"
         print_status "setting environment variable in system profile. Password will be requiered"
         sudo sh -c "echo export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml >> /etc/environment"
         echo "export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml" >> ~/.bashrc
@@ -438,14 +433,14 @@ function install_msf_linux
         cd /usr/local/share/metasploit-framework
         if [[ $RVM -eq 0 ]]; then
             print_status "Installing required ruby gems by Framework using bundler on RVM Ruby"
-            ~/.rvm/bin/rvm 1.9.3-metasploit do bundle install  >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm 1.9.3 do bundle install  >> $LOGFILE 2>&1
         else
             print_status "Installing required ruby gems by Framework using bundler on System Ruby"
             sudo bundle install  >> $LOGFILE 2>&1
         fi
         print_status "Starting Metasploit so as to populate the database."
         if [[ $RVM -eq 0 ]]; then
-            ~/.rvm/bin/rvm 1.9.3-metasploit do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm 1.9.3 do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
         else
             /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
             print_status "Finished Metasploit installation"
@@ -482,8 +477,8 @@ function install_armitage_linux
         print_status "Downloading latest version of Armitage"
         curl -# -o /tmp/armitage.tgz http://www.fastandeasyhacking.com/download/armitage-latest.tgz && print_good "Finished"
         if [ $? -eq 1 ] ; then
-               print_error "Failed to download the latest version of Armitage make sure you"
-               print_error "are connected to the internet and can reach http://www.fastandeasyhacking.com"
+            print_error "Failed to download the latest version of Armitage make sure you"
+            print_error "are connected to the internet and can reach http://www.fastandeasyhacking.com"
         else
             print_status "Decompressing package to /usr/local/share/armitage"
             sudo tar -xvzf /tmp/armitage.tgz -C /usr/local/share >> $LOGFILE 2>&1
@@ -516,7 +511,7 @@ function usage ()
 {
     echo "Script for Installing Metasploit Framework"
     echo "By Carlos_Perez[at]darkoperator.com"
-    echo "Ver 0.1.4"
+    echo "Ver 0.1.5"
     echo ""
     echo "-i                :Install Metasploit Framework."
     echo "-p <password>     :password for Metasploit databse msf user. If not provided a random one is generated for you."
@@ -531,32 +526,26 @@ function install_ruby_rvm
         print_status "Installing RVM"
 
         bash < <(curl -sk https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer) >> $LOGFILE 2>&1
-        #echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"' >> ~/.bashrc
         PS1='$ '
         if [[ $OSTYPE =~ darwin ]]; then
-        	source ~/.bash_profile
+            source ~/.bash_profile
         else
-        	source ~/.bashrc
+            source ~/.bashrc
         fi
 
-        print_status "Installing Ruby 1.9.3 under the name 1.9.3-metasploit"
         if [[ $OSTYPE =~ darwin ]]; then
-        	print_status "Installing necessary dependencies under OSX for Ruby 1.9.3"
-        	~/.rvm/bin/rvm requirements run
-        	print_status "Installing Readline Library"
-    		~/.rvm/bin/rvm pkg install readline
-    		print_status "Installing Ruby"
-    		~/.rvm/bin/rvm reinstall 1.9.3 --with-readline-dir=$rvm_path/usr -n metasploit
+            print_status "Installing Ruby"
+            ~/.rvm/bin/rvm install 1.9.3 --autolibs=4 --verify-downloads 1 >> $LOGFILE 2>&1
         else
-        	~/.rvm/bin/rvm install 1.9.3 -n metasploit >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm install 1.9.3 --autolibs=4 --verify-downloads 1 >> $LOGFILE 2>&1
         fi
 
         if [[ $? -eq 0 ]]; then
             print_good "Installation of Ruby 1.9.3 was successful"
 
-            ~/.rvm/bin/rvm use 1.9.3-metasploit --default >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm use 1.9.3 --default >> $LOGFILE 2>&1
             print_status "Installing base gems"
-            ~/.rvm/bin/rvm 1.9.3-metasploit do gem install sqlite3 bundler >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm 1.9.3 do gem install sqlite3 bundler >> $LOGFILE 2>&1
             if [[ $? -eq 0 ]]; then
                 print_good "Base gems in the RVM Ruby have been installed."
             else
@@ -569,24 +558,24 @@ function install_ruby_rvm
         fi
     else
         print_status "RVM is already installed"
-        if [[ "$( ls -1 ~/.rvm/rubies/)" =~ ruby-1.9.3-p...-metasploit ]]; then
+        if [[ "$( ls -1 ~/.rvm/rubies/)" =~ ruby-1.9.3-p... ]]; then
             print_status "Ruby for Metasploit is already installed"
         else
             PS1='$ '
             if [[ $OSTYPE =~ darwin ]]; then
-        		source ~/.bash_profile
-        	else
-        		source ~/.bashrc
-        	fi
+                source ~/.bash_profile
+            else
+                source ~/.bashrc
+            fi
 
             print_status "Installing Ruby 1.9.3 under the name metasploit"
-            ~/.rvm/bin/rvm install 1.9.3 -n metasploit >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm install 1.9.3  --autolibs=4 --verify-downloads 1  >> $LOGFILE 2>&1
             if [[ $? -eq 0 ]]; then
                 print_good "Installation of Ruby 1.9.3 was successful"
 
-                ~/.rvm/bin/rvm use 1.9.3-metasploit --default >> $LOGFILE 2>&1
+                ~/.rvm/bin/rvm use 1.9.3 --default >> $LOGFILE 2>&1
                 print_status "Installing base gems"
-                ~/.rvm/bin/rvm 1.9.3-metasploit do gem install sqlite3 bundler >> $LOGFILE 2>&1
+                ~/.rvm/bin/rvm 1.9.3 do gem install sqlite3 bundler >> $LOGFILE 2>&1
                 if [[ $? -eq 0 ]]; then
                     print_good "Base gems in the RVM Ruby have been installed."
                 else
@@ -605,17 +594,17 @@ function install_ruby_rvm
 #Variable with log file location for trobleshooting
 LOGFILE="/tmp/msfinstall$NOW.log"
 while getopts "irp:h" options; do
-  case $options in
-    p ) MSFPASS=$OPTARG;;
-    i ) INSTALL=0;;
-    h ) usage;;
-    r ) RVM=0;;
-    \? ) usage
-         exit 1;;
-    * ) usage
-          exit 1;;
+    case $options in
+        p ) MSFPASS=$OPTARG;;
+        i ) INSTALL=0;;
+        h ) usage;;
+        r ) RVM=0;;
+        \? ) usage
+        exit 1;;
+        * ) usage
+        exit 1;;
 
-  esac
+    esac
 done
 
 if [ $INSTALL -eq 0 ]; then
@@ -634,15 +623,15 @@ if [ $INSTALL -eq 0 ]; then
         install_plugins_osx
 
         print_status "#################################################################"
-        print_status "### YOU NEED TO RELOAD YOUR PROFILE BEFORE USE OF METASPLOIT! ###"
-        print_status "### RUN source ~/.bash_profile                                ###"
+        print_status "### YOU NEED TO RELOAD YOUR PROFILE BEFORE USE OF METASPLOIT!   ###"
+        print_status "### RUN source ~/.bash_profile                                  ###"
         if [[ $RVM -eq 0 ]]; then
-            print_status "###                                                            ###"
-            print_status "### INSTALLATION WAS USING RVM, SET 1.9.3-metasploit AS DEFAULT ###"
-            print_status "### RUN rvm use 1.9.3-metasploit --default                     ###"
-            print_status "###                                                            ###"
+            print_status "###                                                             ###"
+            print_status "### INSTALLATION WAS USING RVM, SET 1.9.3 AS DEFAULT            ###"
+            print_status "### RUN rvm use 1.9.3 --default                                 ###"
+            print_status "###                                                             ###"
         fi
-        print_status "#################################################################"
+        print_status "###################################################################"
 
     elif [[ "$KVER" =~ buntu ]]; then
         install_deps_deb
@@ -662,7 +651,7 @@ if [ $INSTALL -eq 0 ]; then
         if [[ $RVM -eq 0 ]]; then
             print_status "###                                                            ###"
             print_status "### INSTALLATION WAS USING RVM SET 1.9.3-metasploit AS DEFAULT ###"
-            print_status "### RUN rvm use 1.9.3-metasploit --default                     ###"
+            print_status "### RUN rvm use 1.9.3 --default                                ###"
         fi
         print_status "### When launching teamserver and armitage with sudo use the   ###"
         print_status "### use the -E option to make sure the MSF Database variable   ###"
@@ -694,7 +683,7 @@ if [ $INSTALL -eq 0 ]; then
             if [[ $RVM -eq 0 ]]; then
                 print_status "###                                                            ###"
                 print_status "### INSTALLATION WAS USING RVM SET 1.9.3-metasploit AS DEFAULT ###"
-                print_status "### RUN rvm use 1.9.3-metasploit --default                     ###"
+                print_status "### RUN rvm use 1.9.3 default                                  ###"
             fi
             print_status "### When launching teamserver and armitage with sudo use the   ###"
             print_status "### use the -E option to make sure the MSF Database variable   ###"
