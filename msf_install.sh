@@ -374,9 +374,18 @@ function install_nmap_linux
 function configure_psql_deb
 {
     print_status "Creating the MSF Database user msf with the password provided"
-    MSFEXIST="$(sudo su postgres -c "psql postgres -tAc \"SELECT 1 FROM pg_roles WHERE rolname='msf'\"")"
+    if [ "$(id -u)" != "0" ]; then
+        MSFEXIST="$(sudo su - postgres -c "psql postgres -tAc \"SELECT 1 FROM pg_roles WHERE rolname='msf'\"")"
+    else
+        MSFEXIST="$(su - postgres -c "psql postgres -tAc \"SELECT 1 FROM pg_roles WHERE rolname='msf'\"")"
+    fi
     if [[ ! $MSFEXIST -eq 1 ]]; then
-        sudo -u postgres psql postgres -c "create role msf login password '$MSFPASS'"  >> $LOGFILE 2>&1
+        if [ "$(id -u)" != "0" ]; then
+            sudo -u postgres psql postgres -c "create role msf login password '$MSFPASS'"  >> $LOGFILE 2>&1
+        else
+            su - postgres -c "psql postgres -c \"create role msf login password '$MSFPASS'\""  >> $LOGFILE 2>&1
+        fi
+
         if [ $? -eq 0 ]; then
             print_good "Metasploit Role named msf has been created."
         else
@@ -386,10 +395,20 @@ function configure_psql_deb
         print_status "The msf role already exists."
     fi
 
-    DBEXIST="$(sudo su postgres -c "psql postgres -l | grep msf")"
+    if [ "$(id -u)" != "0" ]; then
+        DBEXIST="$(sudo su postgres -c "psql postgres -l | grep msf")"
+    else
+        DBEXIST="$(su - postgres -c "psql postgres -l | grep msf")"
+    fi
+
     if [[ ! $DBEXIST ]]; then
         print_status "Creating msf database and setting the owner to msf user"
-        sudo -u postgres psql postgres -c "CREATE DATABASE msf OWNER msf;" >> $LOGFILE 2>&1
+        if [ "$(id -u)" != "0" ]; then
+            sudo -u postgres psql postgres -c "CREATE DATABASE msf OWNER msf;" >> $LOGFILE 2>&1
+        else
+            su - postgres -c "psql postgres -c \"CREATE DATABASE msf OWNER msf;\"" >> $LOGFILE 2>&1
+        fi
+
         if [ $? -eq 0 ]; then
             print_good "Metasploit database named msf has been created."
         else
@@ -407,15 +426,25 @@ function install_msf_linux
 
     if [[ ! -d /usr/local/share/metasploit-framework ]]; then
         print_status "Cloning latest version of Metasploit Framework"
-        sudo git clone https://github.com/rapid7/metasploit-framework.git /usr/local/share/metasploit-framework >> $LOGFILE 2>&1
+        if [ "$(id -u)" != "0" ]; then
+            sudo git clone https://github.com/rapid7/metasploit-framework.git /usr/local/share/metasploit-framework >> $LOGFILE 2>&1
+        else
+            git clone https://github.com/rapid7/metasploit-framework.git /usr/local/share/metasploit-framework >> $LOGFILE 2>&1
+        fi
+
         print_status "Linking metasploit commands."
         cd /usr/local/share/metasploit-framework
         for MSF in $(ls msf*); do
             print_status "linking $MSF command"
-            sudo ln -s /usr/local/share/metasploit-framework/$MSF /usr/local/bin/$MSF
+            if [ "$(id -u)" != "0" ]; then
+                sudo ln -s /usr/local/share/metasploit-framework/$MSF /usr/local/bin/$MSF
+            else
+                ln -s /usr/local/share/metasploit-framework/$MSF /usr/local/bin/$MSF
+            fi
         done
         print_status "Creating Database configuration YAML file."
-        sudo sh -c "echo 'production:
+        if [ "$(id -u)" != "0" ]; then
+            sudo sh -c "echo 'production:
   adapter: postgresql
   database: msf
   username: msf
@@ -424,6 +453,17 @@ function install_msf_linux
   port: 5432
   pool: 75
   timeout: 5' > /usr/local/share/metasploit-framework/database.yml"
+        else
+            sh -c "echo 'production:
+  adapter: postgresql
+  database: msf
+  username: msf
+  password: $MSFPASS
+  host: 127.0.0.1
+  port: 5432
+  pool: 75
+  timeout: 5' > /usr/local/share/metasploit-framework/database.yml"
+        fi
         print_status "setting environment variable in system profile. Password will be requiered"
         sudo sh -c "echo export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml >> /etc/environment"
         echo "export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml" >> ~/.bashrc
