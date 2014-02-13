@@ -11,6 +11,8 @@ The script will install Metasploit Framework and dependencies on:
 * Ubuntu 12.04 and Ubuntu 13.04
 * Debian 7.0
 
+On VPS systems where the user is root run the script without the RVM option. 
+
 ##Components
 
 The script will install on OSX the following components:
@@ -35,6 +37,3 @@ On Linux it will installs:
 
 * Add Armitage Update script to install process
 * Add better comments in to log file.
-* Add function to give the option of installing Oracle Java on Linux systems.
-* Add support for CentOS 6,3 and 6.4 (RVM Only)
-* Add support for Debian 6 (RVM Only) 
