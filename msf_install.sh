@@ -565,7 +565,7 @@ function install_ruby_rvm
     if [[ ! -e ~/.rvm/scripts/rvm ]]; then
         print_status "Installing RVM"
 
-        bash < <(curl -sk https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer) >> $LOGFILE 2>&1
+        bash << (curl -sk https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer) >> $LOGFILE 2>&1
         PS1='$ '
         if [[ $OSTYPE =~ darwin ]]; then
             source ~/.bash_profile
