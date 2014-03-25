@@ -36,6 +36,26 @@ function check_root
 }
 ########################################
 
+function check_postgresql
+{
+  if [ -d /usr/local/share/postgresql ]; then
+    print_error "A previous version of PostgreSQL was found on the system."
+    print_error "remove the prevous version and files and run script again."
+    exit 1
+  fi
+}
+########################################
+
+function check_macports
+{
+    if [ -f /opt/local/bin/port ]; then
+        print_error "MacPorts was detected on the system. This script uses Hombrew"
+        print_error "and it is incompatible with MacPorts."
+        exit 1
+    fi
+}
+########################################
+
 function install_armitage_osx
 {
     if [ -e /usr/bin/curl ]; then
@@ -650,6 +670,8 @@ done
 if [ $INSTALL -eq 0 ]; then
     print_status "Log file with command output and errors $LOGFILE"
     if [[ "$KVER" =~ Darwin ]]; then
+        check_macports
+        check_postgresql
         check_dependencies_osx
         check_for_brew_osx
         install_ruby_osx
