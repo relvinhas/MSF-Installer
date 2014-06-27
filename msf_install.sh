@@ -314,14 +314,14 @@ function install_plugins_osx
 {
     print_status "Installing additional Metasploit plugins"
     print_status "Installing Pentest plugin"
-    curl -# -o /usr/local/share/metasploit-framework/plugins/pentest.rb https://raw.github.com/darkoperator/Metasploit-Plugins/master/pentest.rb
+    curl -L -# -o /usr/local/share/metasploit-framework/plugins/pentest.rb https://raw.github.com/darkoperator/Metasploit-Plugins/master/pentest.rb
     if [ $? -eq 0 ]; then
         print_good "The pentest plugin has been installed."
     else
         print_error "Failed to install the pentest plugin."
     fi
     print_status "Installing DNSRecon Import plugin"
-    curl -# -o /usr/local/share/metasploit-framework/plugins/dnsr_import.rb https://raw.github.com/darkoperator/dnsrecon/master/msf_plugin/dnsr_import.rb
+    curl -L -# -o /usr/local/share/metasploit-framework/plugins/dnsr_import.rb https://raw.github.com/darkoperator/dnsrecon/master/msf_plugin/dnsr_import.rb
     if [ $? -eq 0 ]; then
         print_good "The dnsr_import plugin has been installed."
     else
@@ -515,14 +515,14 @@ function install_plugins_linux
 {
     print_status "Installing additional Metasploit plugins"
     print_status "Installing pentest plugin"
-    sudo curl -# -o /usr/local/share/metasploit-framework/plugins/pentest.rb https://raw.github.com/darkoperator/Metasploit-Plugins/master/pentest.rb
+    sudo curl -L -# -o /usr/local/share/metasploit-framework/plugins/pentest.rb https://raw.github.com/darkoperator/Metasploit-Plugins/master/pentest.rb
     if [ $? -eq 0 ]; then
         print_good "The pentest plugin has been installed."
     else
         print_error "Failed to install the pentest plugin."
     fi
     print_status "Installing DNSRecon Import plugin"
-    sudo curl -# -o /usr/local/share/metasploit-framework/plugins/dnsr_import.rb https://raw.github.com/darkoperator/dnsrecon/master/msf_plugin/dnsr_import.rb
+    sudo curl -L -# -o /usr/local/share/metasploit-framework/plugins/dnsr_import.rb https://raw.github.com/darkoperator/dnsrecon/master/msf_plugin/dnsr_import.rb
     if [ $? -eq 0 ]; then
         print_good "The dnsr_import plugin has been installed."
     else
