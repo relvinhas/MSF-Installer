@@ -722,7 +722,7 @@ if [ $INSTALL -eq 0 ]; then
         print_status "##################################################################"
 
     elif [[ "$KVER" =~ Debian ]]; then
-        if [[ "$(cat /etc/debian_version )" =~ 7.0  ]]; then
+        if [[ "$(cat /etc/debian_version )" =~ 7.*  ]]; then
             if [[ $( cat /etc/apt/sources.list | grep -E '^deb cdrom' ) ]]; then
                 print_error "Source in /etc/apt/sources.list is set to CD or DVD"
                 print_error "Comment out the line and only use network sources."
