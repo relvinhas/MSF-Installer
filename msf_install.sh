@@ -695,7 +695,7 @@ if [ $INSTALL -eq 0 ]; then
         fi
         print_status "###################################################################"
 
-    elif [[ "$KVER" =~ buntu ]]; then
+    elif [ "$KVER" =~ buntu ] || [ -f /etc/dpkg/origins/ubuntu ]; then
         install_deps_deb
 
         if [[ $RVM -eq 0 ]]; then
