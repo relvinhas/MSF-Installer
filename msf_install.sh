@@ -283,10 +283,10 @@ function install_msf_osx
  host: 127.0.0.1
  port: 5432
  pool: 75
- timeout: 5' > /usr/local/share/metasploit-framework/database.yml
+ timeout: 5' > /usr/local/share/metasploit-framework/config/database.yml
         print_status "setting environment variable in system profile. Password will be requiered"
-        sudo sh -c "echo export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml >> /etc/profile"
-        echo "export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml" >> ~/.bash_profile
+        sudo sh -c "echo export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/config/database.yml >> /etc/profile"
+        echo "export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/config/database.yml" >> ~/.bash_profile
         source /etc/profile
         source ~/.bash_profile
         cd /usr/local/share/metasploit-framework
@@ -334,7 +334,7 @@ function install_deps_deb
 {
     print_status "Installing dependencies for Metasploit Framework"
     sudo apt-get -y update  >> $LOGFILE 2>&1
-    sudo apt-get -y install build-essential libreadline-dev  libssl-dev libpq5 libpq-dev libreadline5 libsqlite3-dev libpcap-dev openjdk-7-jre subversion git-core autoconf postgresql pgadmin3 curl zlib1g-dev libxml2-dev libxslt1-dev vncviewer libyaml-dev ruby1.9.3 sqlite3 libgdbm-dev libncurses5-dev libtool bison libffi-dev>> $LOGFILE 2>&1
+    sudo apt-get -y install build-essential libreadline-dev  libssl-dev libpq5 libpq-dev libreadline5 libsqlite3-dev libpcap-dev openjdk-7-jre subversion git-core autoconf postgresql pgadmin3 curl zlib1g-dev libxml2-dev libxslt1-dev vncviewer libyaml-dev ruby1.9.3 sqlite3 ruby-dev libgdbm-dev libncurses5-dev libtool bison libffi-dev>> $LOGFILE 2>&1
     if [ $? -eq 1 ] ; then
         echo "---- Failed to download and install dependencies ----" >> $LOGFILE 2>&1
         print_error "Failed to download and install the dependencies for running Metasploit Framework"
@@ -472,7 +472,7 @@ function install_msf_linux
   host: 127.0.0.1
   port: 5432
   pool: 75
-  timeout: 5' > /usr/local/share/metasploit-framework/database.yml"
+  timeout: 5' > /usr/local/share/metasploit-framework/config/database.yml"
         else
             sh -c "echo 'production:
   adapter: postgresql
@@ -482,11 +482,11 @@ function install_msf_linux
   host: 127.0.0.1
   port: 5432
   pool: 75
-  timeout: 5' > /usr/local/share/metasploit-framework/database.yml"
+  timeout: 5' > /usr/local/share/metasploit-framework/config/database.yml"
         fi
         print_status "setting environment variable in system profile. Password will be requiered"
-        sudo sh -c "echo export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml >> /etc/environment"
-        echo "export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/database.yml" >> ~/.bashrc
+        sudo sh -c "echo export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/config/database.yml >> /etc/environment"
+        echo "export MSF_DATABASE_CONFIG=/usr/local/share/metasploit-framework/config/database.yml" >> ~/.bashrc
         PS1='$ '
         source ~/.bashrc
 
@@ -571,7 +571,7 @@ function usage ()
 {
     echo "Script for Installing Metasploit Framework"
     echo "By Carlos_Perez[at]darkoperator.com"
-    echo "Ver 0.1.5"
+    echo "Ver 0.1.6"
     echo ""
     echo "-i                :Install Metasploit Framework."
     echo "-p <password>     :password for Metasploit databse msf user. If not provided a random one is generated for you."
