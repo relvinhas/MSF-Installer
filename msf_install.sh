@@ -178,7 +178,7 @@ function check_dependencies_osx
 function install_ruby_osx
 {
     print_status "Checking if Ruby 1.9.3 is installed, if not installing it."
-    if [ -d /usr/local/Cellar/ruby193 ] && [ -L /usr/local/bin/ruby ]; then
+    if [ -d /usr/local/Cellar/ruby193 ] && [ -L /usr/local/bin/ruby ] || [ -a ~/.rvm/rubies/*1.9.3* ]; then
         print_good "Correct version of Ruby is installed."
     else
         print_status "Installing Ruby 1.9.3"
