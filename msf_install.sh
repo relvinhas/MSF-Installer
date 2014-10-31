@@ -576,7 +576,7 @@ function usage ()
 {
     echo "Script for Installing Metasploit Framework"
     echo "By Carlos_Perez[at]darkoperator.com"
-    echo "Ver 0.1.6"
+    echo "Ver 0.1.7"
     echo ""
     echo "-i                :Install Metasploit Framework."
     echo "-p <password>     :password for Metasploit databse msf user. If not provided a random one is generated for you."
