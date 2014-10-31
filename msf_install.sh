@@ -292,14 +292,16 @@ function install_msf_osx
         cd /usr/local/share/metasploit-framework
         if [[ $RVM -eq 0 ]]; then
             print_status "Installing required ruby gems by Framework using bundler on RVM Ruby"
-            ~/.rvm/bin/rvm 1.9.3 do bundle install  >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm ruby-1.9.3-p547 do bundle config build.nokogiri --use-system-libraries >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm ruby-1.9.3-p547 do bundle install >> $LOGFILE 2>&1
         else
             print_status "Installing required ruby gems by Framework using bundler on System Ruby"
+            bundle config build.nokogiri --use-system-libraries >> $LOGFILE 2>&1
             bundle install  >> $LOGFILE 2>&1
         fi
         print_status "Starting Metasploit so as to populate the database."
         if [[ $RVM -eq 0 ]]; then
-            ~/.rvm/bin/rvm 1.9.3 do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm ruby-1.9.3-p547 do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
         else
             /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
             print_status "Finished Metasploit installation"
@@ -448,6 +450,7 @@ function install_msf_linux
         print_status "Cloning latest version of Metasploit Framework"
         if [ "$(id -u)" != "0" ]; then
             sudo git clone https://github.com/rapid7/metasploit-framework.git /usr/local/share/metasploit-framework >> $LOGFILE 2>&1
+            sudo chown -R `whoami` /usr/local/share/metasploit-framework >> $LOGFILE 2>&1
         else
             git clone https://github.com/rapid7/metasploit-framework.git /usr/local/share/metasploit-framework >> $LOGFILE 2>&1
         fi
@@ -493,14 +496,16 @@ function install_msf_linux
         cd /usr/local/share/metasploit-framework
         if [[ $RVM -eq 0 ]]; then
             print_status "Installing required ruby gems by Framework using bundler on RVM Ruby"
-            ~/.rvm/bin/rvm 1.9.3 do bundle install  >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm ruby-1.9.3-p547 do bundle config build.nokogiri --use-system-libraries >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm ruby-1.9.3-p547 do bundle install  >> $LOGFILE 2>&1
         else
             print_status "Installing required ruby gems by Framework using bundler on System Ruby"
+            sudo bundle config build.nokogiri --use-system-libraries >> $LOGFILE 2>&1
             sudo bundle install  >> $LOGFILE 2>&1
         fi
         print_status "Starting Metasploit so as to populate the database."
         if [[ $RVM -eq 0 ]]; then
-            ~/.rvm/bin/rvm 1.9.3 do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm ruby-1.9.3-p547 do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
         else
             /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
             print_status "Finished Metasploit installation"
@@ -585,7 +590,7 @@ function install_ruby_rvm
     if [[ ! -e ~/.rvm/scripts/rvm ]]; then
         print_status "Installing RVM"
 
-        bash < <(curl -sk https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer) >> $LOGFILE 2>&1
+        bash < <(curl -sSL https://get.rvm.io) >> $LOGFILE 2>&1
         PS1='$ '
         if [[ $OSTYPE =~ darwin ]]; then
             source ~/.bash_profile
@@ -595,9 +600,9 @@ function install_ruby_rvm
 
         if [[ $OSTYPE =~ darwin ]]; then
             print_status "Installing Ruby"
-            ~/.rvm/bin/rvm install 1.9.3 --autolibs=4 --verify-downloads 1 >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm install ruby-1.9.3-p547 --with-gcc=clang --autolibs=4 --verify-downloads 1 >> $LOGFILE 2>&1
         else
-            ~/.rvm/bin/rvm install 1.9.3 --autolibs=4 --verify-downloads 1 >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm install ruby-1.9.3-p547 --autolibs=4 --verify-downloads 1 >> $LOGFILE 2>&1
         fi
 
         if [[ $? -eq 0 ]]; then
@@ -628,8 +633,8 @@ function install_ruby_rvm
                 source ~/.bashrc
             fi
 
-            print_status "Installing Ruby 1.9.3 under the name metasploit"
-            ~/.rvm/bin/rvm install 1.9.3  --autolibs=4 --verify-downloads 1  >> $LOGFILE 2>&1
+            print_status "Installing Ruby 1.9.3 "
+            ~/.rvm/bin/rvm install ruby-1.9.3-p547  --autolibs=4 --verify-downloads 1  >> $LOGFILE 2>&1
             if [[ $? -eq 0 ]]; then
                 print_good "Installation of Ruby 1.9.3 was successful"
 
