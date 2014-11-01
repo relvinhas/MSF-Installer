@@ -292,8 +292,8 @@ function install_msf_osx
         cd /usr/local/share/metasploit-framework
         if [[ $RVM -eq 0 ]]; then
             print_status "Installing required ruby gems by Framework using bundler on RVM Ruby"
-            ~/.rvm/bin/rvm ruby-1.9.3-p547 do bundle config build.nokogiri --use-system-libraries >> $LOGFILE 2>&1
-            ~/.rvm/bin/rvm ruby-1.9.3-p547 do bundle install >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm ruby-1.9.3-p550 do bundle config build.nokogiri --use-system-libraries >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm ruby-1.9.3-p550 do bundle install >> $LOGFILE 2>&1
         else
             print_status "Installing required ruby gems by Framework using bundler on System Ruby"
             bundle config build.nokogiri --use-system-libraries >> $LOGFILE 2>&1
@@ -301,7 +301,7 @@ function install_msf_osx
         fi
         print_status "Starting Metasploit so as to populate the database."
         if [[ $RVM -eq 0 ]]; then
-            ~/.rvm/bin/rvm ruby-1.9.3-p547 do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm ruby-1.9.3-p550 do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
         else
             /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
             print_status "Finished Metasploit installation"
@@ -496,8 +496,8 @@ function install_msf_linux
         cd /usr/local/share/metasploit-framework
         if [[ $RVM -eq 0 ]]; then
             print_status "Installing required ruby gems by Framework using bundler on RVM Ruby"
-            ~/.rvm/bin/rvm ruby-1.9.3-p547 do bundle config build.nokogiri --use-system-libraries >> $LOGFILE 2>&1
-            ~/.rvm/bin/rvm ruby-1.9.3-p547 do bundle install  >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm ruby-1.9.3-p550 do bundle config build.nokogiri --use-system-libraries >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm ruby-1.9.3-p550 do bundle install  >> $LOGFILE 2>&1
         else
             print_status "Installing required ruby gems by Framework using bundler on System Ruby"
             sudo bundle config build.nokogiri --use-system-libraries >> $LOGFILE 2>&1
@@ -505,7 +505,7 @@ function install_msf_linux
         fi
         print_status "Starting Metasploit so as to populate the database."
         if [[ $RVM -eq 0 ]]; then
-            ~/.rvm/bin/rvm ruby-1.9.3-p547 do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm ruby-1.9.3-p550 do ruby /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
         else
             /usr/local/share/metasploit-framework/msfconsole -q -x "exit" >> $LOGFILE 2>&1
             print_status "Finished Metasploit installation"
@@ -600,9 +600,9 @@ function install_ruby_rvm
 
         if [[ $OSTYPE =~ darwin ]]; then
             print_status "Installing Ruby"
-            ~/.rvm/bin/rvm install ruby-1.9.3-p547 --with-gcc=clang --autolibs=4 --verify-downloads 1 >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm install ruby-1.9.3-p550 --with-gcc=clang --autolibs=4 --verify-downloads 1 >> $LOGFILE 2>&1
         else
-            ~/.rvm/bin/rvm install ruby-1.9.3-p547 --autolibs=4 --verify-downloads 1 >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm install ruby-1.9.3-p550 --autolibs=4 --verify-downloads 1 >> $LOGFILE 2>&1
         fi
 
         if [[ $? -eq 0 ]]; then
@@ -634,13 +634,13 @@ function install_ruby_rvm
             fi
 
             print_status "Installing Ruby 1.9.3 "
-            ~/.rvm/bin/rvm install ruby-1.9.3-p547  --autolibs=4 --verify-downloads 1  >> $LOGFILE 2>&1
+            ~/.rvm/bin/rvm install ruby-1.9.3-p550  --autolibs=4 --verify-downloads 1  >> $LOGFILE 2>&1
             if [[ $? -eq 0 ]]; then
                 print_good "Installation of Ruby 1.9.3 was successful"
 
-                ~/.rvm/bin/rvm use ruby-1.9.3-p547 --default >> $LOGFILE 2>&1
+                ~/.rvm/bin/rvm use ruby-1.9.3-p550 --default >> $LOGFILE 2>&1
                 print_status "Installing base gems"
-                ~/.rvm/bin/rvm ruby-1.9.3-p547 do gem install sqlite3 bundler >> $LOGFILE 2>&1
+                ~/.rvm/bin/rvm ruby-1.9.3-p550 do gem install sqlite3 bundler >> $LOGFILE 2>&1
                 if [[ $? -eq 0 ]]; then
                     print_good "Base gems in the RVM Ruby have been installed."
                 else
@@ -695,7 +695,7 @@ if [ $INSTALL -eq 0 ]; then
         if [[ $RVM -eq 0 ]]; then
             print_status "###                                                             ###"
             print_status "### INSTALLATION WAS USING RVM, SET 1.9.3 AS DEFAULT            ###"
-            print_status "### RUN rvm use ruby-1.9.3-p547 --default                       ###"
+            print_status "### RUN rvm use ruby-1.9.3-p550 --default                       ###"
             print_status "###                                                             ###"
         fi
         print_status "###################################################################"
@@ -718,7 +718,7 @@ if [ $INSTALL -eq 0 ]; then
         if [[ $RVM -eq 0 ]]; then
             print_status "###                                                            ###"
             print_status "### INSTALLATION WAS USING RVM SET 1.9.3 AS DEFAULT            ###"
-            print_status "### RUN rvm use ruby-1.9.3-p547 --default                      ###"
+            print_status "### RUN rvm use ruby-1.9.3-p550 --default                      ###"
         fi
         print_status "### When launching teamserver and armitage with sudo use the   ###"
         print_status "### use the -E option to make sure the MSF Database variable   ###"
@@ -750,7 +750,7 @@ if [ $INSTALL -eq 0 ]; then
             if [[ $RVM -eq 0 ]]; then
                 print_status "###                                                            ###"
                 print_status "### INSTALLATION WAS USING RVM SET 1.9.3-metasploit AS DEFAULT ###"
-                print_status "### RUN rvm use ruby-1.9.3-p547 default                        ###"
+                print_status "### RUN rvm use ruby-1.9.3-p550 default                        ###"
             fi
             print_status "### When launching teamserver and armitage with sudo use the   ###"
             print_status "### use the -E option to make sure the MSF Database variable   ###"
