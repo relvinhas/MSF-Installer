@@ -177,14 +177,14 @@ function check_dependencies_osx
 
 function install_ruby_osx
 {
-    print_status "Checking if Ruby 1.9.3 is installed, if not installing it."
-    if [ -d /usr/local/Cellar/ruby193 ] && [ -L /usr/local/bin/ruby ] || [ -a ~/.rvm/rubies/*1.9.3* ]; then
+    print_status "Checking if Ruby 2.1 is installed, if not installing it."
+    if [ -d /usr/local/Cellar/ruby21 ] && [ -L /usr/local/bin/ruby ] || [ -a ~/.rvm/rubies/*2.1* ]; then
         print_good "Correct version of Ruby is installed."
     else
-        print_status "Installing Ruby 1.9.3"
+        print_status "Installing Ruby 2.1"
         brew tap homebrew/versions >> $LOGFILE 2>&1
-        brew install homebrew/versions/ruby193 >> $LOGFILE 2>&1
-        echo PATH=/usr/local/opt/ruby193/bin:$PATH >> ~/.bash_profile
+        brew install homebrew/versions/ruby21 >> $LOGFILE 2>&1
+        echo PATH=/usr/local/opt/ruby21/bin:$PATH >> ~/.bash_profile
         source  ~/.bash_profile
     fi
     print_status "Installing the bundler and SQLite3 Gems"
